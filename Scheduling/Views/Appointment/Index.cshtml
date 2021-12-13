@@ -1,0 +1,54 @@
+﻿@* to retrieve session data, we use following libraries and injection *@
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor 
+
+@* Retreive all the list of doctors and display it here *@
+<div class="row">
+    @* if tempdata.Containskey == newAdminSignp show the notification of an admin created account*@
+    @if (TempData.ContainsKey("newAdminSignup"))
+            {
+                <div class="container">
+                    <div class="alert alert-success alert-dismissible">
+                        <a href ="#" class="close" data-dismiss="alert" aria-label="close">x</a>
+                        <strong>Account created for @TempData["newAdminSignup"].ToString()</strong>
+                    </div>
+                </div>
+            } 
+    <div class="container">
+        @* We want to display the list if admin is logged in, so we use if *@
+        @if (User.IsInRole(Scheduling.Utility.Helper.Admin))
+        {
+            // if the use is admin, show the dropdown
+            <div class="row">
+                <div class="form-group col-2" id="divDoctorList">
+                    <label> Select Doctor </label>
+                    @* Display the dropdown, use html helper/tag helper *@
+                    @* It's done using "view bag/viewdata" in the controller file *@
+                    @* "ID", "Name" MUST BE THE SAME NAME IN THE MODEL OR ERROR WILL OCCUR *@
+                    @Html.DropDownList("doctorID", new SelectList(ViewBag.DoctorList, "ID", "Name"),
+                   new
+                        {
+                            @class = "form-control select2",
+                   @onchange = "onDoctorChange();"
+                        })
+                    @* @onchange to refer to the js function to refresh the calendar whenever the doctor is changed *@
+                </div>
+                <div class="col-3 offset-7">
+                    <a asp-controller="Account" asp-action="Register" class="btn-secondary form-control text-xl-center">Register an Admin</a>
+                </div>
+            </div>
+
+        }
+        @* Initialize calendar here, we go to script-custom-calendar.js to iniatlize it there *@
+        <div id="calendar">
+
+        </div>
+    </div>
+</div>
+@* Adding partial view for when adming clicks on a day he can change things *@
+<partial name="_AddEditAppointment" />
+
+@* getting session data in the view*@
+<div class="text-right pt-2">
+    <p>@HttpContextAccessor.HttpContext.Session.GetString("ssuserName")'s account is logged in</p>
+</div>

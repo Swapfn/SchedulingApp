@@ -1,0 +1,30 @@
+﻿@inject  Microsoft.AspNetCore.Identity.SignInManager<Scheduling.Models.ApplicationUser> signInManager
+@if (signInManager.IsSignedIn(User))
+{
+    //Adding Logout & Current use email
+    <form method="post" id="logoutForm" asp-action="Logout" asp-controller="Account">
+        <ul class="nav navbar-nav">
+            <li>Hello, @User.Identity.Name</li>
+            <li>
+                @*Anchor tag using JS*@
+                <a href="javascript:document.getElementById('logoutForm').submit()">Logout</a> @*Anchor Tag*@
+                @*<a id="logoutForm" asp-action="Logout" asp-controller="Account">Logout</a>*@
+            </li>
+        </ul>
+    </form>
+}
+else
+{
+<ul class="nav navbar-nav">
+    <li class="nav-item">
+    <a class="nav-link" id="registerLink" asp-controller="Account" asp-action="Register">Register</a>
+    </li>
+    <li class="nav-item">
+    <a class="nav-link" id="loginLink" asp-controller="Account" asp-action="Login">Login</a>
+    </li>
+
+    @*
+    <li>@Html.ActionLink("Sign Up", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+    <li>@Html.ActionLink("Sign In", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>*@
+</ul>
+}

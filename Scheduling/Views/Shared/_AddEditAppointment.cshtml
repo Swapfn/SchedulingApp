@@ -1,0 +1,108 @@
+﻿@* Modal is the window that opens as a dialouge
+    Data options:
+    {backdrop
+    boolean or the string 'static'	true
+    Includes a modal-backdrop element. Alternatively, specify static for a backdrop which doesn't close the modal on click.}
+    {keyboard	
+    boolean	true	
+    Closes the modal when escape key is pressed
+    }
+*@
+<div class="modal fade" role="dialog" id="appointmentInput" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="appointmentForm" autocomplete="off" novalidate="novalidate">
+                <div class="modal-header">
+                    @if (User.IsInRole(Scheduling.Utility.Helper.Admin))
+                    {
+                        <h4 class="modal-title">Add/Edit Appointment</h4>
+                    }
+                    else
+                    {
+                    <h4 class="modal-title">Appointment Details</h4>
+                    }
+                </div>
+                <div class="modal-body">
+                    @* title *@
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" maxlength="100" class="form-control" id="title" />
+                    </div>
+                    @* description *@
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea type="text" class="form-control" id="description"></textarea>
+                    </div>
+                    @* Patient selection *@
+                    @if (User.IsInRole(Scheduling.Utility.Helper.Admin))
+                    {
+                        <div class="form-group">
+                            <label for="title">Select Patient</label>
+                            <select id="patientID" asp-items="@(new SelectList(ViewBag.PatientList, "ID", "Name"))" , class="form-control"></select>
+                        </div>
+                    }
+                    else
+                    {
+                        @if (User.IsInRole(Scheduling.Utility.Helper.Doctor))
+                        {
+                            <div class="form-group">
+                                <label for="lblPatientName">Patient Name</label>
+                                <label class="form-control" id="lblPatientName" disabled ></label>
+                            </div>
+                            <div class="form-group">
+                                <label for="lblStatus">Status</label>
+                                <label class="form-control" id="lblStatus" disabled ></label>
+                            </div>
+                        }
+                        @if (User.IsInRole(Scheduling.Utility.Helper.Patient))
+                        {
+                            <div class="form-group">
+                                <label for="lblDoctorName">Doctor Name</label>
+                                <label class="form-control" id="lblDoctorName" disabled ></label>
+                            </div>
+                            <div class="form-group">
+                                <label for="lblStatus">Status</label>
+                                <label class="form-control" id="lblStatus" disabled ></label>
+                            </div>
+                        }
+                    }
+
+                    @* startdate *@
+                    <div class="form-group">
+                        <label for="appointmentDate">Start Date Time</label>
+                        <input class="form-control" id="appointmentDate" />
+                    </div>
+                    @* Edit functitonality *@
+                    <div class="form-group">
+                        <label for="title">Duration</label>
+                        <select id="duration" asp-items="ViewBag.Duration" , class="form-control"></select>
+                    </div>
+                    @* id to work at editing existing appointment *@
+                    <input type="hidden" id="ID" />
+                </div>
+                @* buttons *@
+            <div class="modal-footer">
+                @* close button visible regardless of user role *@
+                <button type="button" class="btn btn-secondary" onclick="onCloseModal();">Close</button> &nbsp;
+
+                @* buttons depending on what role the user in
+                    if admin they can add/delete/close
+                    if doctor they can confirm/delete/close*@
+
+                @if (User.IsInRole(Scheduling.Utility.Helper.Admin))
+                {
+                    // we want to display add/edit/delete buttons
+                    <button type="button" id="btnSubmit" class="btn btn-success" onclick="onSubmitForm();">Submit</button>
+                    <button type="button" id="btnDelete" class="btn btn-danger" onclick="onDeleteAppointment();">Delete</button>
+                }
+                @if (User.IsInRole(Scheduling.Utility.Helper.Doctor))
+                {
+                    <button type="button" id="btnConfirm" class="btn btn-success" onclick="onConfirm();">Confirm</button>
+                    <button type="button" id="btnDelete" class="btn btn-danger" onclick="onDeleteAppointment();">Delete</button>
+                    // d-none is bootstrap class to hide 
+                }
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
